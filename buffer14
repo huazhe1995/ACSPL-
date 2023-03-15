@@ -1,0 +1,88 @@
+STOP
+GLOBAL INT Ar1(2)(5)
+
+ON IN0.0 & FPOS(0)>100 & ^PST(8).#RUN
+WAIT 5
+IF IN0.0
+    I0=1 
+    Ar1(0)(0) = Ar1(0)(0) + 1
+    DISP "IN0.0 A platform lower left sensor triggers", Ar1(0)(0),TIME
+    CALL INFO_DISP
+ELSE
+    Ar1(1)(0) = Ar1(1)(0) + 1
+    DISP "IN0.0 The lower left sensor of platform A is falsely triggered", Ar1(1)(0),TIME
+    WRITE Ar1,acslog
+END
+RET
+
+ON IN0.1 & FPOS(0)<1800 & ^PST(8).#RUN 
+WAIT 5
+IF IN0.1
+    I1=1 
+    Ar1(0)(1) = Ar1(0)(1) + 1
+    DISP "IN0.1 A platform right upper sensor triggers", Ar1(0)(1),TIME
+    CALL INFO_DISP
+ELSE
+    Ar1(1)(1) = Ar1(1)(1) + 1
+    DISP "IN0.1 The right upper sensor of platform A is falsely triggered", Ar1(1)(1),TIME
+    WRITE Ar1,acslog
+END
+RET
+
+ON IN0.2 & FPOS(2)>100 & ^PST(8).#RUN 
+WAIT 5
+IF IN0.2
+    I2=1 
+    Ar1(0)(2) = Ar1(0)(2) + 1
+    DISP "IN0.2 B platform lower left sensor triggers", Ar1(0)(2),TIME
+    CALL INFO_DISP
+ELSE
+    Ar1(1)(2) = Ar1(1)(2) + 1
+    DISP "IN0.2 The lower left sensor of platform B is falsely triggered", Ar1(1)(2),TIME
+    WRITE Ar1,acslog
+END
+RET
+
+ON IN0.3 & FPOS(2)<1800 & ^PST(8).#RUN 
+WAIT 5
+IF IN0.3
+    I3=1 
+    Ar1(0)(3) = Ar1(0)(3) + 1
+    DISP "IN0.3 B platform right upper sensor triggers", Ar1(0)(3),TIME
+    CALL INFO_DISP
+ELSE
+    Ar1(1)(3) = Ar1(1)(3) + 1
+    DISP "IN0.3 The right upper sensor of platform B is falsely triggered", Ar1(1)(3),TIME
+    WRITE Ar1,acslog
+END
+RET
+
+
+ON (IN0.4 & ABS(FPOS(8)-FPOS(9))<179 & ^PST(8).#RUN) | FAULT(8).#ENC | FAULT(9).#ENC
+WAIT 5
+IF IN0.4
+	I4=1  
+    Ar1(0)(4) = Ar1(0)(4) + 1
+    DISP "IN0.4 Z-axis sensor trigger", Ar1(0)(4), TIME
+    CALL INFO_DISP
+ELSE
+    Ar1(1)(4) = Ar1(1)(4) + 1
+    DISP "IN0.4 Z-axis sensor mistriggered", Ar1(1)(4), TIME
+    WRITE Ar1,acslog
+END
+RET
+
+ON PST(0).1
+I0=0;I1=0;I2=0;I3=0;I4=0
+RET
+
+INFO_DISP:
+KILL ALL
+LOOP 7
+WAIT 10
+DISP FPOS(0), FPOS(2), FPOS(8), FPOS(9), TIME
+END
+WRITE Ar1,acslog
+DISABLE ALL
+WAIT 1000
+RET
