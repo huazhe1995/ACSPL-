@@ -1,0 +1,33 @@
+STOP
+
+ON FPOS(0)>940 &FPOS(8)>-10 & MST(0).#MOVE & ^MST(8).#MOVE & RVEL(0)>5 & ^MST(0).#ACC
+WHILE 1
+!Monitoring velocity loop and position loop
+!IF ABS(PE(0))>0.005 & (ABS(RVEL(0)-FVEL(0))>0.5 | ABS((RVEL(0)-FVEL(0))/ RVEL(0))>0.02) & MST(0).#MOVE & ^MST(0).#ACC
+!Only monitoring position loop
+IF ABS(PE(0))>0.005 & MST(0).#MOVE & ^MST(0).#ACC
+DISP "Y1 STAGE UNSTABLE:POS=%.2f   ",FPOS(0),"PE= %.4f  ",ABS(PE(0)),"VEL = %.3f  ",ABS(RVEL(0)-FVEL(0)),"VEL%% = %.3f%%  ",ABS((RVEL(0)-FVEL(0))*100/ RVEL(0)),"Elapsed time :",TIME
+WAIT 50
+ELSEIF MST(0).#MOVE & MST(0).#ACC
+STOP
+ELSE
+END
+END
+RET
+
+
+ON FPOS(2)>940 & FPOS(9)>-10 & MST(2).#MOVE & ^MST(9).#MOVE & RVEL(2)>5 & ^MST(2).#ACC
+WHILE 1
+!Monitoring velocity loop and position loop
+!IF ABS(PE(2))>0.005 & (ABS(RVEL(2)-FVEL(2))>0.5 | ABS((RVEL(2)-FVEL(2))/ RVEL(2))>0.02) & MST(2).#MOVE & ^MST(2).#ACC
+!Only monitoring position loop
+IF ABS(PE(2))>0.005 & MST(2).#MOVE & ^MST(2).#ACC
+DISP "Y2 STAGE UNSTABLE:POS=%.2f   ",FPOS(2),"PE= %.4f  ",ABS(PE(2)),"VEL = %.3f  ",ABS(RVEL(2)-FVEL(2)),"VEL%% = %.3f%%  ",ABS((RVEL(2)-FVEL(2))*100/ RVEL(2)),"Elapsed time :",TIME
+WAIT 50
+ELSEIF MST(2).#MOVE & MST(2).#ACC
+STOP
+ELSE
+END
+END
+
+RET
