@@ -1,0 +1,46 @@
+!INT count,TIMEMS,TIMETEMP
+
+!count=0
+ENABLE 1
+ENABLE 7
+
+VEL(1)=250
+ACC(1)=10000
+DEC(1)=10000
+KDEC(1)=100000
+JERK(1)=50000
+
+VEL(7)=250
+ACC(7)=10000
+DEC(7)=10000
+KDEC(7)=100000
+JERK(7)=50000
+
+
+PTP/v 1,0,500
+PTP/v 7,0,500
+TILL ((FPOS(1)<0.1)&(FPOS(7)<0.1))
+DISP "Alignment Cameras back to the zero position."
+
+ST:
+!TIMETEMP=TIME
+!TIMEMS=TIME-TIMETEMP
+!DISP "Stage1 start",count,"cycle.","start time ms",TIMEMS
+
+IF ((FPOS(0)<11)&(FPOS(8)>-0.1))
+PTP 1,120
+PTP 7,100
+END
+
+IF ((FPOS(2)<11)&(FPOS(9)>-0.1))
+PTP 1,100
+PTP 7,120
+END
+
+!TIMEMS=TIME-TIMETEMP
+!DISP "Stage1 cycle end.","End time ms",TIMEMS
+!DISP "\n\n"
+!count=count+1
+GOTO ST
+
+STOP
