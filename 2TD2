@@ -1,0 +1,108 @@
+INT count,TIMEMS,TIMETEMP
+
+count=0
+ENABLE 2
+ENABLE 9
+
+VEL(2)=1500
+ACC(2)=7000
+DEC(2)=7000
+KDEC(2)=13000
+JERK(2)=50000
+
+VEL(9)=200
+ACC(9)=2000
+DEC(9)=2000
+KDEC(9)=6000
+JERK(9)=3000
+
+IF (FPOS(8)>FPOS(9))
+	PTP/e 9,-190
+	TILL ((FPOS(8)>-0.1)&(FPOS(9)<-189.9))
+	PTP/e 2,10
+ELSE
+	PTP/e 9,0
+	TILL ((FPOS(9)>-0.1)&(FPOS(8)<-189.9))
+	PTP/e 2,1100
+	TILL ((FPOS(2)>1099)&(FPOS(0)<81))
+	PTP/e 9,-190
+	TILL ((FPOS(8)>-0.1)&(FPOS(9)<-189.9))
+	PTP/e 2,10
+END
+
+DISP "Stage2 back to the loading/unloading position."
+
+TILL((FPOS(0)<11)&(FPOS(2)<11)&(FPOS(8)>-0.1)&(FPOS(9)<-189.9))
+DISP "Start stage 2"
+
+ST:
+TIMETEMP=TIME
+TIMEMS=TIME-TIMETEMP
+DISP "Stage2 start",count,"cycle.","start time ms",TIMEMS
+
+!880
+!Y1 960 DAOWEI
+!Z2 0
+TILL ((FPOS(0)>891)&(FPOS(2)<11))
+IF((FPOS(0)>891)&(FPOS(2)<11))
+PTP/e 9,0
+END
+!WAIT 3000
+
+
+
+TILL (((FPOS(0)>991)|(FPOS(8)<-189.9))&(FPOS(9)>-0.1))
+IF (((FPOS(0)>991)|(FPOS(8)<-189.9))&(FPOS(9)>-0.1))
+!WAIT 3900
+PTP/e 2,100
+!WAIT 150
+END
+
+
+
+
+
+!
+TILL (((FPOS(0)>1701)|(FPOS(8)<-189.9))&(FPOS(9)>-0.1))
+IF (((FPOS(0)>1701)|(FPOS(8)<-189.9))&(FPOS(9)>-0.1))
+PTP/e 2,580
+!WAIT 150
+END
+!
+
+
+
+TILL (((FPOS(8)<-189.9)|(FPOS(0)<11))&(FPOS(9)>-0.1))
+IF (((FPOS(8)<-189.9)|(FPOS(0)<11))&(FPOS(9)>-0.1))
+!PTP/e 2,580
+PTP/e 2,1700
+PTP/e 2,1680
+PTP/ev 2,1280,170
+WAIT 200
+PTP/ev 2,1680,170
+PTP/e 2,1880
+END
+
+TILL ((FPOS(0)<581)&(FPOS(2)>1879))
+IF ((FPOS(0)<581)&(FPOS(2)>1879))
+PTP/e 9,-190
+END
+
+!TILL ((FPOS(0)<101)&(FPOS(2)>1879))
+!IF ((FPOS(0)<101)&(FPOS(2)>1879))
+!PTP/e 9,-190
+!END
+
+TILL ((FPOS(8)>-0.1)&(FPOS(9)<-189.9))
+IF ((FPOS(8)>-0.1)&(FPOS(9)<-189.9))
+
+PTP/e 2,10
+END
+
+TIMEMS=TIME-TIMETEMP
+DISP "Stage2 cycle end.","End time ms",TIMEMS
+DISP "\n\n"
+count=count+1
+GOTO ST
+
+STOP
